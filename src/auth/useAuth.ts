@@ -1,10 +1,50 @@
 import { useState, useCallback } from 'react';
 import SEED_USERS from '../data/users.json';
 
-const mockDb = [...SEED_USERS];
+interface RawUser {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  createdAt: string;
+}
 
-async function authenticateUser(email, password) {
-  await new Promise((resolve) => setTimeout(resolve, 800));
+export interface SafeUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
+export interface AuthState {
+  user: SafeUser | null;
+  isLoading: boolean;
+  error: string | null;
+  isAuthenticated: boolean;
+}
+
+export type LoginResult =
+  | { success: true; user: SafeUser }
+  | { success: false; error: string };
+
+export type RegisterResult =
+  | { success: true; user: SafeUser }
+  | { success: false; error: string };
+
+export interface AuthHook {
+  auth: AuthState;
+  login: (email: string, password: string) => Promise<LoginResult>;
+  register: (name: string, email: string, password: string) => Promise<RegisterResult>;
+  logout: () => void;
+  clearError: () => void;
+}
+
+const mockDb: RawUser[] = [...(SEED_USERS as RawUser[])];
+
+async function authenticateUser(email: string, password: string): Promise<SafeUser> {
+  await new Promise<void>((resolve) => setTimeout(resolve, 800));
 
   const normalizedEmail = email.trim().toLowerCase();
 
@@ -22,8 +62,8 @@ async function authenticateUser(email, password) {
   return safeUser;
 }
 
-async function registerUser(name, email, password) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+async function registerUser(name: string, email: string, password: string): Promise<SafeUser> {
+  await new Promise<void>((resolve) => setTimeout(resolve, 1000));
 
   const normalizedEmail = email.trim().toLowerCase();
 
@@ -35,7 +75,7 @@ async function registerUser(name, email, password) {
     throw new Error('Email sudah terdaftar. Silakan gunakan email lain.');
   }
 
-  const newUser = {
+  const newUser: RawUser = {
     id: `usr_${Date.now()}`,
     name: name.trim(),
     email: normalizedEmail,
@@ -50,15 +90,15 @@ async function registerUser(name, email, password) {
   return safeUser;
 }
 
-export function useAuth() {
-  const [auth, setAuth] = useState({
+export function useAuth(): AuthHook {
+  const [auth, setAuth] = useState<AuthState>({
     user: null,
     isLoading: false,
     error: null,
     isAuthenticated: false,
   });
 
-  const login = useCallback(async (email, password) => {
+  const login = useCallback(async (email: string, password: string): Promise<LoginResult> => {
     setAuth((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -66,7 +106,7 @@ export function useAuth() {
       setAuth({ user, isLoading: false, error: null, isAuthenticated: true });
       return { success: true, user };
     } catch (err) {
-      const message = err.message ?? 'Terjadi kesalahan. Coba lagi.';
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan. Coba lagi.';
       setAuth((prev) => ({
         ...prev,
         isLoading: false,
@@ -77,7 +117,7 @@ export function useAuth() {
     }
   }, []);
 
-  const register = useCallback(async (name, email, password) => {
+  const register = useCallback(async (name: string, email: string, password: string): Promise<RegisterResult> => {
     setAuth((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -85,7 +125,7 @@ export function useAuth() {
       setAuth({ user, isLoading: false, error: null, isAuthenticated: true });
       return { success: true, user };
     } catch (err) {
-      const message = err.message ?? 'Terjadi kesalahan. Coba lagi.';
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan. Coba lagi.';
       setAuth((prev) => ({
         ...prev,
         isLoading: false,

@@ -13,10 +13,12 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import type { AuthHook } from '../auth/useAuth';
 
 const LOGO = require('../../assets/Logo.png');
+const DUMMY_IMG = require('../../assets/dummy.png');
 
-function SecureBadge() {
+function SecureBadge(): React.ReactElement {
   return (
     <View className="flex-row items-center gap-1 px-3 py-1 rounded-full bg-surface-container-low">
       <View className="w-2.5 h-2.5 rounded-full border border-outline" />
@@ -27,7 +29,12 @@ function SecureBadge() {
   );
 }
 
-function ErrorBanner({ message, onDismiss }) {
+interface ErrorBannerProps {
+  message: string;
+  onDismiss: () => void;
+}
+
+function ErrorBanner({ message, onDismiss }: ErrorBannerProps): React.ReactElement {
   return (
     <View className="flex-row items-start gap-2 px-4 py-3 rounded-xl bg-error-container">
       <View className="mt-0.5">
@@ -43,6 +50,19 @@ function ErrorBanner({ message, onDismiss }) {
   );
 }
 
+interface FormInputProps {
+  label: string;
+  value: string;
+  onChangeText: (val: string) => void;
+  placeholder: string;
+  secureTextEntry?: boolean;
+  keyboardType?: React.ComponentProps<typeof TextInput>['keyboardType'];
+  autoCapitalize?: React.ComponentProps<typeof TextInput>['autoCapitalize'];
+  autoComplete?: React.ComponentProps<typeof TextInput>['autoComplete'];
+  rightSlot?: React.ReactNode;
+  hasError?: boolean;
+}
+
 function FormInput({
   label,
   value,
@@ -54,7 +74,7 @@ function FormInput({
   autoComplete,
   rightSlot,
   hasError,
-}) {
+}: FormInputProps): React.ReactElement {
   return (
     <View className="gap-1">
       <Text className="text-headline-sm text-on-surface">{label}</Text>
@@ -82,7 +102,12 @@ function FormInput({
   );
 }
 
-export default function LoginScreen({ authHook, onNavigate }) {
+export interface LoginScreenProps {
+  authHook: AuthHook;
+  onNavigate: (screen: string) => void;
+}
+
+export default function LoginScreen({ authHook, onNavigate }: LoginScreenProps): React.ReactElement {
   const { auth, login, clearError } = authHook;
 
   const [email, setEmail] = useState('');
@@ -95,14 +120,14 @@ export default function LoginScreen({ authHook, onNavigate }) {
 
   const [scaleAnim] = useState(() => new Animated.Value(1));
 
-  function animatePress() {
+  function animatePress(): void {
     Animated.sequence([
       Animated.timing(scaleAnim, { toValue: 0.97, duration: 80, useNativeDriver: true }),
       Animated.timing(scaleAnim, { toValue: 1, duration: 80, useNativeDriver: true }),
     ]).start();
   }
 
-  function validateEmail(val) {
+  function validateEmail(val: string): boolean {
     if (!val.trim()) {
       setEmailError('Email wajib diisi.');
       return false;
@@ -116,7 +141,7 @@ export default function LoginScreen({ authHook, onNavigate }) {
     return true;
   }
 
-  function validatePassword(val) {
+  function validatePassword(val: string): boolean {
     if (!val) {
       setPasswordError('Kata sandi wajib diisi.');
       return false;
@@ -129,7 +154,7 @@ export default function LoginScreen({ authHook, onNavigate }) {
     return true;
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(): Promise<void> {
     const emailOk = validateEmail(email);
     const passwordOk = validatePassword(password);
     if (!emailOk || !passwordOk) return;
@@ -138,7 +163,7 @@ export default function LoginScreen({ authHook, onNavigate }) {
     await login(email, password);
   }
 
-  function goToRegister() {
+  function goToRegister(): void {
     clearError();
     setEmailError('');
     setPasswordError('');
@@ -235,9 +260,12 @@ export default function LoginScreen({ authHook, onNavigate }) {
                   hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
                   accessibilityLabel={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                 >
-                  <Text className="text-outline text-body-default">
-                    {showPassword ? '🙈' : '👁'}
-                  </Text>
+                  <Image
+                    source={DUMMY_IMG}
+                    className="w-5 h-5"
+                    resizeMode="contain"
+                    style={{ opacity: showPassword ? 1 : 0.4 }}
+                  />
                 </TouchableOpacity>
               }
             />

@@ -13,16 +13,26 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import type { AuthHook, SafeUser } from '../auth/useAuth';
 
 const LOGO = require('../../assets/Logo.png');
+const DUMMY_IMG = require('../../assets/dummy.png');
 
-const STRENGTH = {
+type PasswordStrengthLevel = 'weak' | 'fair' | 'strong';
+
+interface StrengthMeta {
+  label: string;
+  color: string;
+  width: string;
+}
+
+const STRENGTH: Record<PasswordStrengthLevel, StrengthMeta> = {
   weak:   { label: 'Lemah', color: 'bg-error',              width: 'w-1/3'  },
   fair:   { label: 'Cukup', color: 'bg-tertiary-container', width: 'w-2/3'  },
   strong: { label: 'Kuat',  color: 'bg-tertiary',           width: 'w-full' },
 };
 
-function getPasswordStrength(password) {
+function getPasswordStrength(password: string): PasswordStrengthLevel | null {
   if (!password) return null;
   const hasUpper = /[A-Z]/.test(password);
   const hasDigit = /\d/.test(password);
@@ -34,7 +44,7 @@ function getPasswordStrength(password) {
   return 'strong';
 }
 
-function SecureBadge() {
+function SecureBadge(): React.ReactElement {
   return (
     <View className="flex-row items-center gap-1 px-3 py-1 rounded-full bg-surface-container-low">
       <View className="w-2.5 h-2.5 rounded-full border border-outline" />
@@ -45,7 +55,12 @@ function SecureBadge() {
   );
 }
 
-function ErrorBanner({ message, onDismiss }) {
+interface ErrorBannerProps {
+  message: string;
+  onDismiss: () => void;
+}
+
+function ErrorBanner({ message, onDismiss }: ErrorBannerProps): React.ReactElement {
   return (
     <View className="flex-row items-start gap-2 px-4 py-3 rounded-xl bg-error-container">
       <View className="mt-1 w-2 h-2 rounded-full bg-on-error-container" />
@@ -57,6 +72,21 @@ function ErrorBanner({ message, onDismiss }) {
       </TouchableOpacity>
     </View>
   );
+}
+
+interface FormInputProps {
+  label: string;
+  hint?: string;
+  value: string;
+  onChangeText: (val: string) => void;
+  onBlur?: () => void;
+  placeholder: string;
+  secureTextEntry?: boolean;
+  keyboardType?: React.ComponentProps<typeof TextInput>['keyboardType'];
+  autoCapitalize?: React.ComponentProps<typeof TextInput>['autoCapitalize'];
+  autoComplete?: React.ComponentProps<typeof TextInput>['autoComplete'];
+  rightSlot?: React.ReactNode;
+  hasError?: boolean;
 }
 
 function FormInput({
@@ -72,7 +102,7 @@ function FormInput({
   autoComplete,
   rightSlot,
   hasError,
-}) {
+}: FormInputProps): React.ReactElement {
   return (
     <View className="gap-1">
       <Text className="text-headline-sm text-on-surface">{label}</Text>
@@ -103,7 +133,11 @@ function FormInput({
   );
 }
 
-function PasswordStrengthBar({ strength }) {
+interface PasswordStrengthBarProps {
+  strength: PasswordStrengthLevel | null;
+}
+
+function PasswordStrengthBar({ strength }: PasswordStrengthBarProps): React.ReactElement | null {
   if (!strength) return null;
   const meta = STRENGTH[strength];
   return (
@@ -122,7 +156,13 @@ function PasswordStrengthBar({ strength }) {
   );
 }
 
-function TermsCheckbox({ checked, onToggle, hasError }) {
+interface TermsCheckboxProps {
+  checked: boolean;
+  onToggle: () => void;
+  hasError?: boolean;
+}
+
+function TermsCheckbox({ checked, onToggle, hasError }: TermsCheckboxProps): React.ReactElement {
   return (
     <TouchableOpacity
       onPress={onToggle}
@@ -160,7 +200,11 @@ function TermsCheckbox({ checked, onToggle, hasError }) {
   );
 }
 
-function SuccessState({ user }) {
+interface SuccessStateProps {
+  user: SafeUser | null;
+}
+
+function SuccessState({ user }: SuccessStateProps): React.ReactElement {
   return (
     <View className="items-center gap-4 py-4">
       <View className="w-16 h-16 rounded-full bg-tertiary-container items-center justify-center">
@@ -179,7 +223,20 @@ function SuccessState({ user }) {
   );
 }
 
-export default function RegisterScreen({ authHook, onNavigate }) {
+interface FormErrors {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreeTerms: string;
+}
+
+export interface RegisterScreenProps {
+  authHook: AuthHook;
+  onNavigate: (screen: string) => void;
+}
+
+export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenProps): React.ReactElement {
   const { auth, register, clearError } = authHook;
 
   const [name, setName] = useState('');
@@ -191,7 +248,7 @@ export default function RegisterScreen({ authHook, onNavigate }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<FormErrors>({
     name: '',
     email: '',
     password: '',
@@ -201,43 +258,43 @@ export default function RegisterScreen({ authHook, onNavigate }) {
 
   const [scaleAnim] = useState(() => new Animated.Value(1));
 
-  function animatePress() {
+  function animatePress(): void {
     Animated.sequence([
       Animated.timing(scaleAnim, { toValue: 0.97, duration: 80, useNativeDriver: true }),
       Animated.timing(scaleAnim, { toValue: 1, duration: 80, useNativeDriver: true }),
     ]).start();
   }
 
-  function validateName(val = name) {
+  function validateName(val: string = name): string {
     if (!val.trim()) return 'Nama lengkap wajib diisi.';
     if (val.trim().length < 2) return 'Nama terlalu pendek.';
     return '';
   }
 
-  function validateEmail(val = email) {
+  function validateEmail(val: string = email): string {
     if (!val.trim()) return 'Email wajib diisi.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())) return 'Format email tidak valid.';
     return '';
   }
 
-  function validatePassword(val = password) {
+  function validatePassword(val: string = password): string {
     if (!val) return 'Kata sandi wajib diisi.';
     if (val.length < 8) return 'Kata sandi minimal 8 karakter.';
     return '';
   }
 
-  function validateConfirmPassword(val = confirmPassword, pw = password) {
+  function validateConfirmPassword(val: string = confirmPassword, pw: string = password): string {
     if (!val) return 'Konfirmasi kata sandi wajib diisi.';
     if (val !== pw) return 'Kata sandi tidak cocok.';
     return '';
   }
 
-  function validateTerms(val = agreeTerms) {
+  function validateTerms(val: boolean = agreeTerms): string {
     return val ? '' : 'Anda harus menyetujui syarat & ketentuan.';
   }
 
-  function validateAll() {
-    const next = {
+  function validateAll(): boolean {
+    const next: FormErrors = {
       name: validateName(),
       email: validateEmail(),
       password: validatePassword(),
@@ -248,19 +305,19 @@ export default function RegisterScreen({ authHook, onNavigate }) {
     return Object.values(next).every((e) => !e);
   }
 
-  function handleNameChange(val) {
+  function handleNameChange(val: string): void {
     setName(val);
     if (errors.name) setErrors((e) => ({ ...e, name: validateName(val) }));
     if (auth.error) clearError();
   }
 
-  function handleEmailChange(val) {
+  function handleEmailChange(val: string): void {
     setEmail(val);
     if (errors.email) setErrors((e) => ({ ...e, email: validateEmail(val) }));
     if (auth.error) clearError();
   }
 
-  function handlePasswordChange(val) {
+  function handlePasswordChange(val: string): void {
     setPassword(val);
     if (errors.password) setErrors((e) => ({ ...e, password: validatePassword(val) }));
     if (errors.confirmPassword) {
@@ -269,7 +326,7 @@ export default function RegisterScreen({ authHook, onNavigate }) {
     if (auth.error) clearError();
   }
 
-  function handleConfirmChange(val) {
+  function handleConfirmChange(val: string): void {
     setConfirmPassword(val);
     if (errors.confirmPassword) {
       setErrors((e) => ({ ...e, confirmPassword: validateConfirmPassword(val, password) }));
@@ -277,7 +334,7 @@ export default function RegisterScreen({ authHook, onNavigate }) {
     if (auth.error) clearError();
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(): Promise<void> {
     if (!validateAll()) return;
     animatePress();
     const result = await register(name, email, password);
@@ -286,7 +343,7 @@ export default function RegisterScreen({ authHook, onNavigate }) {
     }
   }
 
-  function goToLogin() {
+  function goToLogin(): void {
     clearError();
     onNavigate('login');
   }
@@ -398,9 +455,12 @@ export default function RegisterScreen({ authHook, onNavigate }) {
                         hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
                         accessibilityLabel={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                       >
-                        <Text className="text-outline text-body-default">
-                          {showPassword ? '🙈' : '👁'}
-                        </Text>
+                        <Image
+                          source={DUMMY_IMG}
+                          className="w-5 h-5"
+                          resizeMode="contain"
+                          style={{ opacity: showPassword ? 1 : 0.4 }}
+                        />
                       </TouchableOpacity>
                     }
                   />
@@ -433,9 +493,12 @@ export default function RegisterScreen({ authHook, onNavigate }) {
                       hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
                       accessibilityLabel={showConfirm ? 'Sembunyikan konfirmasi' : 'Tampilkan konfirmasi'}
                     >
-                      <Text className="text-outline text-body-default">
-                        {showConfirm ? '🙈' : '👁'}
-                      </Text>
+                      <Image
+                        source={DUMMY_IMG}
+                        className="w-5 h-5"
+                        resizeMode="contain"
+                        style={{ opacity: showConfirm ? 1 : 0.4 }}
+                      />
                     </TouchableOpacity>
                   }
                 />
