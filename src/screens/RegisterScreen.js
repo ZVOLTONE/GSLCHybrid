@@ -10,41 +10,19 @@ import {
   Image,
   ActivityIndicator,
   Animated,
-  type KeyboardTypeOptions,
-  type TextInputProps,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import type { SafeUser, UseAuthReturn } from '../auth/useAuth';
-
 const LOGO = require('../../assets/Logo.png');
 
-/** Screens in the auth flow that the parent navigator can switch to. */
-type AuthScreen = 'login' | 'register';
-
-/** Qualitative password-strength buckets. */
-type PasswordStrength = 'weak' | 'fair' | 'strong';
-
-/** Keys of the register form that carry validation messages. */
-type RegisterField = 'name' | 'email' | 'password' | 'confirmPassword' | 'agreeTerms';
-
-/** Map of each register field to its current error message ('' means valid). */
-type RegisterErrors = Record<RegisterField, string>;
-
-interface StrengthMeta {
-  label: string;
-  color: string;
-  width: string;
-}
-
-const STRENGTH: Record<PasswordStrength, StrengthMeta> = {
-  weak: { label: 'Lemah', color: 'bg-error', width: 'w-1/3' },
-  fair: { label: 'Cukup', color: 'bg-tertiary-container', width: 'w-2/3' },
-  strong: { label: 'Kuat', color: 'bg-tertiary', width: 'w-full' },
+const STRENGTH = {
+  weak:   { label: 'Lemah', color: 'bg-error',              width: 'w-1/3'  },
+  fair:   { label: 'Cukup', color: 'bg-tertiary-container', width: 'w-2/3'  },
+  strong: { label: 'Kuat',  color: 'bg-tertiary',           width: 'w-full' },
 };
 
-function getPasswordStrength(password: string): PasswordStrength | null {
+function getPasswordStrength(password) {
   if (!password) return null;
   const hasUpper = /[A-Z]/.test(password);
   const hasDigit = /\d/.test(password);
@@ -54,45 +32,6 @@ function getPasswordStrength(password: string): PasswordStrength | null {
   if (score <= 1) return 'weak';
   if (score <= 3) return 'fair';
   return 'strong';
-}
-
-interface ErrorBannerProps {
-  message: string;
-  onDismiss: () => void;
-}
-
-interface FormInputProps {
-  label: string;
-  hint?: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  onBlur?: () => void;
-  placeholder?: string;
-  secureTextEntry?: boolean;
-  keyboardType?: KeyboardTypeOptions;
-  autoCapitalize?: TextInputProps['autoCapitalize'];
-  autoComplete?: TextInputProps['autoComplete'];
-  rightSlot?: React.ReactNode;
-  hasError?: boolean;
-}
-
-interface PasswordStrengthBarProps {
-  strength: PasswordStrength | null;
-}
-
-interface TermsCheckboxProps {
-  checked: boolean;
-  onToggle: () => void;
-  hasError?: boolean;
-}
-
-interface SuccessStateProps {
-  user: SafeUser | null;
-}
-
-interface RegisterScreenProps {
-  authHook: UseAuthReturn;
-  onNavigate: (screen: AuthScreen) => void;
 }
 
 function SecureBadge() {
@@ -106,7 +45,7 @@ function SecureBadge() {
   );
 }
 
-function ErrorBanner({ message, onDismiss }: ErrorBannerProps) {
+function ErrorBanner({ message, onDismiss }) {
   return (
     <View className="flex-row items-start gap-2 px-4 py-3 rounded-xl bg-error-container">
       <View className="mt-1 w-2 h-2 rounded-full bg-on-error-container" />
@@ -133,7 +72,7 @@ function FormInput({
   autoComplete,
   rightSlot,
   hasError,
-}: FormInputProps) {
+}) {
   return (
     <View className="gap-1">
       <Text className="text-headline-sm text-on-surface">{label}</Text>
@@ -164,7 +103,7 @@ function FormInput({
   );
 }
 
-function PasswordStrengthBar({ strength }: PasswordStrengthBarProps) {
+function PasswordStrengthBar({ strength }) {
   if (!strength) return null;
   const meta = STRENGTH[strength];
   return (
@@ -183,7 +122,7 @@ function PasswordStrengthBar({ strength }: PasswordStrengthBarProps) {
   );
 }
 
-function TermsCheckbox({ checked, onToggle, hasError }: TermsCheckboxProps) {
+function TermsCheckbox({ checked, onToggle, hasError }) {
   return (
     <TouchableOpacity
       onPress={onToggle}
@@ -221,7 +160,7 @@ function TermsCheckbox({ checked, onToggle, hasError }: TermsCheckboxProps) {
   );
 }
 
-function SuccessState({ user }: SuccessStateProps) {
+function SuccessState({ user }) {
   return (
     <View className="items-center gap-4 py-4">
       <View className="w-16 h-16 rounded-full bg-tertiary-container items-center justify-center">
@@ -240,7 +179,7 @@ function SuccessState({ user }: SuccessStateProps) {
   );
 }
 
-export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenProps) {
+export default function RegisterScreen({ authHook, onNavigate }) {
   const { auth, register, clearError } = authHook;
 
   const [name, setName] = useState('');
@@ -252,7 +191,7 @@ export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenP
   const [showConfirm, setShowConfirm] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
 
-  const [errors, setErrors] = useState<RegisterErrors>({
+  const [errors, setErrors] = useState({
     name: '',
     email: '',
     password: '',
@@ -269,36 +208,36 @@ export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenP
     ]).start();
   }
 
-  function validateName(val: string = name): string {
+  function validateName(val = name) {
     if (!val.trim()) return 'Nama lengkap wajib diisi.';
     if (val.trim().length < 2) return 'Nama terlalu pendek.';
     return '';
   }
 
-  function validateEmail(val: string = email): string {
+  function validateEmail(val = email) {
     if (!val.trim()) return 'Email wajib diisi.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())) return 'Format email tidak valid.';
     return '';
   }
 
-  function validatePassword(val: string = password): string {
+  function validatePassword(val = password) {
     if (!val) return 'Kata sandi wajib diisi.';
     if (val.length < 8) return 'Kata sandi minimal 8 karakter.';
     return '';
   }
 
-  function validateConfirmPassword(val: string = confirmPassword, pw: string = password): string {
+  function validateConfirmPassword(val = confirmPassword, pw = password) {
     if (!val) return 'Konfirmasi kata sandi wajib diisi.';
     if (val !== pw) return 'Kata sandi tidak cocok.';
     return '';
   }
 
-  function validateTerms(val: boolean = agreeTerms): string {
+  function validateTerms(val = agreeTerms) {
     return val ? '' : 'Anda harus menyetujui syarat & ketentuan.';
   }
 
-  function validateAll(): boolean {
-    const next: RegisterErrors = {
+  function validateAll() {
+    const next = {
       name: validateName(),
       email: validateEmail(),
       password: validatePassword(),
@@ -309,19 +248,19 @@ export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenP
     return Object.values(next).every((e) => !e);
   }
 
-  function handleNameChange(val: string) {
+  function handleNameChange(val) {
     setName(val);
     if (errors.name) setErrors((e) => ({ ...e, name: validateName(val) }));
     if (auth.error) clearError();
   }
 
-  function handleEmailChange(val: string) {
+  function handleEmailChange(val) {
     setEmail(val);
     if (errors.email) setErrors((e) => ({ ...e, email: validateEmail(val) }));
     if (auth.error) clearError();
   }
 
-  function handlePasswordChange(val: string) {
+  function handlePasswordChange(val) {
     setPassword(val);
     if (errors.password) setErrors((e) => ({ ...e, password: validatePassword(val) }));
     if (errors.confirmPassword) {
@@ -330,7 +269,7 @@ export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenP
     if (auth.error) clearError();
   }
 
-  function handleConfirmChange(val: string) {
+  function handleConfirmChange(val) {
     setConfirmPassword(val);
     if (errors.confirmPassword) {
       setErrors((e) => ({ ...e, confirmPassword: validateConfirmPassword(val, password) }));

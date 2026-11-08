@@ -10,41 +10,11 @@ import {
   Image,
   ActivityIndicator,
   Animated,
-  type KeyboardTypeOptions,
-  type TextInputProps,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import type { UseAuthReturn } from '../auth/useAuth';
-
 const LOGO = require('../../assets/Logo.png');
-
-/** Screens in the auth flow that the parent navigator can switch to. */
-type AuthScreen = 'login' | 'register';
-
-interface ErrorBannerProps {
-  message: string;
-  onDismiss: () => void;
-}
-
-interface FormInputProps {
-  label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
-  secureTextEntry?: boolean;
-  keyboardType?: KeyboardTypeOptions;
-  autoCapitalize?: TextInputProps['autoCapitalize'];
-  autoComplete?: TextInputProps['autoComplete'];
-  rightSlot?: React.ReactNode;
-  hasError?: boolean;
-}
-
-interface LoginScreenProps {
-  authHook: UseAuthReturn;
-  onNavigate: (screen: AuthScreen) => void;
-}
 
 function SecureBadge() {
   return (
@@ -57,7 +27,7 @@ function SecureBadge() {
   );
 }
 
-function ErrorBanner({ message, onDismiss }: ErrorBannerProps) {
+function ErrorBanner({ message, onDismiss }) {
   return (
     <View className="flex-row items-start gap-2 px-4 py-3 rounded-xl bg-error-container">
       <View className="mt-0.5">
@@ -84,7 +54,7 @@ function FormInput({
   autoComplete,
   rightSlot,
   hasError,
-}: FormInputProps) {
+}) {
   return (
     <View className="gap-1">
       <Text className="text-headline-sm text-on-surface">{label}</Text>
@@ -112,7 +82,7 @@ function FormInput({
   );
 }
 
-export default function LoginScreen({ authHook, onNavigate }: LoginScreenProps) {
+export default function LoginScreen({ authHook, onNavigate }) {
   const { auth, login, clearError } = authHook;
 
   const [email, setEmail] = useState('');
@@ -132,7 +102,7 @@ export default function LoginScreen({ authHook, onNavigate }: LoginScreenProps) 
     ]).start();
   }
 
-  function validateEmail(val: string): boolean {
+  function validateEmail(val) {
     if (!val.trim()) {
       setEmailError('Email wajib diisi.');
       return false;
@@ -146,7 +116,7 @@ export default function LoginScreen({ authHook, onNavigate }: LoginScreenProps) 
     return true;
   }
 
-  function validatePassword(val: string): boolean {
+  function validatePassword(val) {
     if (!val) {
       setPasswordError('Kata sandi wajib diisi.');
       return false;
