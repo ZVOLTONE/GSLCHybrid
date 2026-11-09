@@ -18,6 +18,10 @@ import Svg, {
   LinearGradient,
   Stop,
 } from 'react-native-svg';
+import type { SafeUser } from '../auth/useAuth';
+import marketOverviewData from '../data/marketOverview.json';
+import ScreenerScreen from './ScreenerScreen';
+import StockSearchScreen from './StockSearchScreen';
 
 const DUMMY_IMG = require('../../assets/dummy.png');
 
@@ -27,8 +31,6 @@ type TimeRange = '1D' | '1W' | '1M' | '3M' | '1Y' | 'ALL';
 interface KpiCard {
   id: string;
   label: string;
-  iconText: string;
-  iconColor: string;
   primary: string;
   primaryColor: string;
   line1: string;
@@ -64,165 +66,30 @@ interface BlueChipStock {
 interface NavTab {
   id: string;
   label: string;
-  icon: string;
   active: boolean;
 }
 
-const KPI_CARDS: KpiCard[] = [
-  {
-    id: 'composite',
-    label: 'COMPOSITE',
-    iconText: '↗',
-    iconColor: 'text-primary',
-    primary: '7,720.45',
-    primaryColor: 'text-on-surface',
-    line1: '+0.55%',
-    line1Color: 'text-tertiary',
-    line2: 'Vol 18.4B sh',
-    line2Color: 'text-on-surface-variant',
-  },
-  {
-    id: 'emiten',
-    label: 'EMITEN BASE',
-    iconText: '⬛',
-    iconColor: 'text-secondary',
-    primary: '934',
-    primaryColor: 'text-on-surface',
-    line1: '+3 IPO',
-    line1Color: 'text-tertiary',
-    line2: 'L:42 • M:186 • S:706',
-    line2Color: 'text-on-surface-variant',
-  },
-  {
-    id: 'deepvalue',
-    label: 'DEEP VALUE',
-    iconText: '◈',
-    iconColor: 'text-primary-container',
-    primary: '142',
-    primaryColor: 'text-primary-container',
-    line1: 'Stocks',
-    line1Color: 'text-on-surface-variant',
-    line2: '< -1.0σ 5Y PER/PBV',
-    line2Color: 'text-on-surface-variant',
-  },
-  {
-    id: 'multiples',
-    label: 'MULTIPLES',
-    iconText: '◉',
-    iconColor: 'text-tertiary',
-    primary: '14.8x',
-    primaryColor: 'text-on-surface',
-    line1: '-8.6% 5Y',
-    line1Color: 'text-error',
-    line2: 'PBV 1.95x · Yield 3.42%',
-    line2Color: 'text-on-surface-variant',
-  },
-];
+interface MarketSummary {
+  indexName: string;
+  value: string;
+  change: string;
+  changePoints: string;
+  turnover: string;
+  session: string;
+}
 
-const ARCHETYPES: ArchetypeCard[] = [
-  {
-    id: 'valuation',
-    companies: '34 Companies',
-    companiesBg: 'bg-primary/10',
-    companiesColor: 'text-primary',
-    metric: 'Avg PER 7.2x',
-    title: 'Attractive Valuation',
-    description: 'Discounted PER & PBV trading below 5Y historical sector medians with positive FCF.',
-    topStocks: 'Top: ASII, INDF, PGAS',
-  },
-  {
-    id: 'profitability',
-    companies: '28 Companies',
-    companiesBg: 'bg-tertiary/10',
-    companiesColor: 'text-tertiary',
-    metric: 'ROE > 18%',
-    title: 'Strong Profitability',
-    description: 'Exceptional capital productivity. ROE consistently exceeding 18% and ROA above 8%.',
-    topStocks: 'Top: BBCA, UNVR, ICBP',
-  },
-  {
-    id: 'balance',
-    companies: '52 Companies',
-    companiesBg: 'bg-secondary/10',
-    companiesColor: 'text-secondary',
-    metric: 'DER < 0.4x',
-    title: 'Healthy Balance Sheet',
-    description: 'Net cash or low gearing with ICR > 8x, resilient against macro interest rate shocks.',
-    topStocks: 'Top: CPIN, KLBF, MYOR',
-  },
-  {
-    id: 'dividend',
-    companies: '19 Companies',
-    companiesBg: 'bg-tertiary/10',
-    companiesColor: 'text-tertiary',
-    metric: 'Yield > 6.5%',
-    title: 'Dividend Aristocrats',
-    description: 'Sustainable dividend yield over 6.5% backed by healthy payout ratio (35%–70%).',
-    topStocks: 'Top: ITMG, PTBA, BJBR',
-  },
-];
+export interface MarketOverviewScreenProps {
+  user?: SafeUser | null;
+  onLogout?: () => void;
+}
 
-const BLUE_CHIPS: BlueChipStock[] = [
-  {
-    id: 'bbca',
-    abbr: 'CA',
-    ticker: 'BBCA',
-    sector: 'Fin',
-    per: '23.4x',
-    perColor: 'text-on-surface',
-    pbv: '4.7x',
-    price: 'Rp 10,650',
-    change: '+1.19%',
-    changePositive: true,
-  },
-  {
-    id: 'bbri',
-    abbr: 'RI',
-    ticker: 'BBRI',
-    sector: 'Fin',
-    per: '11.2x',
-    perColor: 'text-on-surface',
-    pbv: '2.1x',
-    price: 'Rp 4,820',
-    change: '-0.62%',
-    changePositive: false,
-  },
-  {
-    id: 'tlkm',
-    abbr: 'TL',
-    ticker: 'TLKM',
-    sector: 'Telco',
-    per: '12.8x',
-    perColor: 'text-on-surface',
-    pbv: '2.3x',
-    price: 'Rp 2,980',
-    change: '+0.34%',
-    changePositive: true,
-  },
-  {
-    id: 'asii',
-    abbr: 'AS',
-    ticker: 'ASII',
-    sector: 'Conglom',
-    per: '6.8x',
-    perColor: 'text-tertiary',
-    pbv: '1.05x',
-    price: 'Rp 5,175',
-    change: '+1.47%',
-    changePositive: true,
-  },
-];
-
-const NAV_TABS: NavTab[] = [
-  { id: 'overview',  label: 'Overview',  icon: '◈', active: true  },
-  { id: 'screener',  label: 'Screener',  icon: '⊟', active: false },
-  { id: 'stock',     label: 'Stock',     icon: '◉', active: false },
-  { id: 'sector',    label: 'Sector',    icon: '◑', active: false },
-  { id: 'watchlist', label: 'Watchlist', icon: '◇', active: false },
-];
-
-const INDEX_TABS: IndexKey[] = ['ihsg', 'lq45', 'idx30'];
-const TIME_RANGES: TimeRange[] = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
+const KPI_CARDS: KpiCard[] = marketOverviewData.kpiCards;
+const ARCHETYPES: ArchetypeCard[] = marketOverviewData.archetypes;
+const BLUE_CHIPS: BlueChipStock[] = marketOverviewData.blueChips;
+const NAV_TABS: NavTab[] = marketOverviewData.navTabs;
+const INDEX_TABS: IndexKey[] = marketOverviewData.indexTabs as IndexKey[];
+const TIME_RANGES: TimeRange[] = marketOverviewData.timeRanges as TimeRange[];
+const MARKET_SUMMARY: MarketSummary = marketOverviewData.marketSummary;
 
 function SparklineSvg(): React.ReactElement {
   return (
@@ -284,10 +151,18 @@ function AreaChartSvg(): React.ReactElement {
   );
 }
 
-export default function MarketOverviewScreen(): React.ReactElement {
+export default function MarketOverviewScreen({ user, onLogout }: MarketOverviewScreenProps): React.ReactElement {
   const [activeIndex, setActiveIndex] = useState<IndexKey>('ihsg');
   const [activeRange, setActiveRange] = useState<TimeRange>('3M');
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  const toggleFavorite = (ticker: string) => {
+    setFavorites((current) => current.includes(ticker)
+      ? current.filter((item) => item !== ticker)
+      : [...current, ticker]);
+  };
 
   const filteredChips = searchQuery
     ? BLUE_CHIPS.filter((s) => s.ticker.includes(searchQuery.toUpperCase().trim()))
@@ -320,7 +195,7 @@ export default function MarketOverviewScreen(): React.ReactElement {
                 </View>
               </View>
               <Text className="text-label-mono-sm text-on-surface-variant" numberOfLines={1}>
-                Session II • Overview
+                {user?.name ? `${user.name} • Overview` : `${MARKET_SUMMARY.session} • Overview`}
               </Text>
             </View>
           </View>
@@ -333,9 +208,14 @@ export default function MarketOverviewScreen(): React.ReactElement {
               <Image source={DUMMY_IMG} className="w-5 h-5" resizeMode="contain" />
               <View className="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-primary-container" />
             </Pressable>
-            <View className="w-8 h-8 rounded-full bg-primary items-center justify-center overflow-hidden">
+            <TouchableOpacity
+              onPress={onLogout}
+              className="w-8 h-8 rounded-full bg-primary items-center justify-center overflow-hidden"
+              activeOpacity={0.8}
+              accessibilityLabel="User profile / Keluar"
+            >
               <Image source={DUMMY_IMG} className="w-8 h-8 rounded-full" resizeMode="cover" />
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
@@ -346,7 +226,34 @@ export default function MarketOverviewScreen(): React.ReactElement {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {activeTab === 'screener' ? (
+          <View className="px-margin gap-space-md pt-space-sm">
+            <ScreenerScreen favorites={favorites} onToggleFavorite={toggleFavorite} />
+          </View>
+        ) : activeTab === 'stock' ? (
+          <StockSearchScreen stocks={BLUE_CHIPS} favorites={favorites} onToggleFavorite={toggleFavorite} />
+        ) : (
         <View className="px-margin gap-space-md pt-space-sm">
+
+          {favorites.length > 0 && (
+            <View className="gap-2">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-headline-sm text-on-surface">Favorit Saya</Text>
+                <Text className="text-label-mono-sm text-on-surface-variant">{favorites.length} saham</Text>
+              </View>
+              {BLUE_CHIPS.filter((stock) => favorites.includes(stock.ticker)).map((stock) => (
+                <View key={stock.id} className="bg-surface-container rounded-xl p-3 flex-row items-center justify-between">
+                  <View>
+                    <Text className="text-headline-sm text-on-surface">{stock.ticker}</Text>
+                    <Text className="text-label-mono-sm text-on-surface-variant">{stock.price} · PER {stock.per}</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => toggleFavorite(stock.ticker)} className="min-h-11 min-w-11 items-center justify-center" accessibilityRole="button" accessibilityLabel={`Hapus ${stock.ticker} dari favorit`}>
+                    <Image source={DUMMY_IMG} className="h-5 w-5" resizeMode="contain" accessibilityLabel="Saham favorit" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
 
           <View className="flex-row items-center gap-1">
             <View className="flex-1 relative">
@@ -381,24 +288,24 @@ export default function MarketOverviewScreen(): React.ReactElement {
           <View className="bg-surface-container-low rounded-xl p-space-sm flex-row items-center justify-between">
             <View className="flex-col min-w-0 flex-1 pr-2">
               <View className="flex-row items-center gap-1.5">
-                <Text className="text-headline-sm text-on-surface">IHSG</Text>
+                <Text className="text-headline-sm text-on-surface">{MARKET_SUMMARY.indexName}</Text>
                 <Text className="text-metric-large text-on-surface font-semibold tracking-tight">
-                  7,720.45
+                  {MARKET_SUMMARY.value}
                 </Text>
               </View>
               <View className="flex-row items-center gap-2 mt-0.5">
                 <Text className="text-label-mono-sm text-tertiary font-semibold">
-                  ▲ +0.55% (+42.18)
+                  {MARKET_SUMMARY.change} ({MARKET_SUMMARY.changePoints})
                 </Text>
                 <Text className="text-on-surface-variant/40">•</Text>
-                <Text className="text-label-mono-sm text-on-surface-variant">Turnover Rp 12.4T</Text>
+                <Text className="text-label-mono-sm text-on-surface-variant">Turnover {MARKET_SUMMARY.turnover}</Text>
               </View>
             </View>
 
             <View className="items-end shrink-0">
               <SparklineSvg />
               <Text className="text-[9px] text-tertiary mt-1 uppercase tracking-wider font-semibold">
-                Session II Active
+                {MARKET_SUMMARY.session}
               </Text>
             </View>
           </View>
@@ -415,7 +322,7 @@ export default function MarketOverviewScreen(): React.ReactElement {
                   <Text className="text-label-badge text-on-surface-variant uppercase tracking-wider">
                     {card.label}
                   </Text>
-                  <Text className={`text-[15px] ${card.iconColor}`}>{card.iconText}</Text>
+                  <Image source={DUMMY_IMG} className="h-4 w-4" resizeMode="contain" accessibilityLabel={card.label} />
                 </View>
                 <View>
                   <Text className={`text-metric-large font-semibold tracking-tight ${card.primaryColor}`}>
@@ -610,7 +517,7 @@ export default function MarketOverviewScreen(): React.ReactElement {
                     <Text className={`text-label-mono-sm font-medium mt-0.5 ${
                       stock.changePositive ? 'text-tertiary' : 'text-error'
                     }`}>
-                      {stock.changePositive ? '▲' : '▼'} {stock.change}
+                      <Image source={DUMMY_IMG} className="h-3 w-3" resizeMode="contain" accessibilityLabel={stock.changePositive ? 'Harga naik' : 'Harga turun'} /> {stock.change}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -619,6 +526,7 @@ export default function MarketOverviewScreen(): React.ReactElement {
           </View>
 
         </View>
+        )}
       </ScrollView>
 
       <SafeAreaView edges={['bottom']} className="bg-surface-container-lowest/90 absolute bottom-0 left-0 right-0">
@@ -626,17 +534,16 @@ export default function MarketOverviewScreen(): React.ReactElement {
           {NAV_TABS.map((tab) => (
             <TouchableOpacity
               key={tab.id}
+              onPress={() => setActiveTab(tab.id)}
               activeOpacity={0.7}
               className="flex-1 h-full min-w-11 flex-col items-center justify-center gap-0.5"
             >
-              {tab.active && (
+              {activeTab === tab.id && (
                 <View className="absolute top-0 w-8 h-0.5 rounded-full bg-primary-container" />
               )}
-              <Text className={`text-[22px] ${tab.active ? 'text-primary-container' : 'text-on-surface-variant'}`}>
-                {tab.icon}
-              </Text>
+              <Image source={DUMMY_IMG} className="h-5 w-5" resizeMode="contain" accessibilityLabel={tab.label} />
               <Text className={`text-label-badge leading-tight ${
-                tab.active ? 'text-primary-container font-semibold' : 'text-on-surface-variant'
+                  activeTab === tab.id ? 'text-primary-container font-semibold' : 'text-on-surface-variant'
               }`}>
                 {tab.label}
               </Text>

@@ -1,0 +1,151 @@
+{
+  "marketSummary": {
+    "indexName": "IHSG",
+    "value": "7,720.45",
+    "change": "+0.55%",
+    "changePoints": "+42.18",
+    "turnover": "Rp 12.4T",
+    "session": "Session II Active"
+  },
+  "kpiCards": [
+    {
+      "id": "composite",
+      "label": "COMPOSITE",
+      "primary": "7,720.45",
+      "primaryColor": "text-on-surface",
+      "line1": "+0.55%",
+      "line1Color": "text-tertiary",
+      "line2": "Vol 18.4B sh",
+      "line2Color": "text-on-surface-variant"
+    },
+    {
+      "id": "emiten",
+      "label": "EMITEN BASE",
+      "primary": "934",
+      "primaryColor": "text-on-surface",
+      "line1": "+3 IPO",
+      "line1Color": "text-tertiary",
+      "line2": "L:42 • M:186 • S:706",
+      "line2Color": "text-on-surface-variant"
+    },
+    {
+      "id": "deepvalue",
+      "label": "DEEP VALUE",
+      "primary": "142",
+      "primaryColor": "text-primary-container",
+      "line1": "Stocks",
+      "line1Color": "text-on-surface-variant",
+      "line2": "< -1.0σ 5Y PER/PBV",
+      "line2Color": "text-on-surface-variant"
+    },
+    {
+      "id": "multiples",
+      "label": "MULTIPLES",
+      "primary": "14.8x",
+      "primaryColor": "text-on-surface",
+      "line1": "-8.6% 5Y",
+      "line1Color": "text-error",
+      "line2": "PBV 1.95x · Yield 3.42%",
+      "line2Color": "text-on-surface-variant"
+    }
+  ],
+  "archetypes": [
+    {
+      "id": "valuation",
+      "companies": "34 Companies",
+      "companiesBg": "bg-primary/10",
+      "companiesColor": "text-primary",
+      "metric": "Avg PER 7.2x",
+      "title": "Attractive Valuation",
+      "description": "Discounted PER & PBV trading below 5Y historical sector medians with positive FCF.",
+      "topStocks": "Top: ASII, INDF, PGAS"
+    },
+    {
+      "id": "profitability",
+      "companies": "28 Companies",
+      "companiesBg": "bg-tertiary/10",
+      "companiesColor": "text-tertiary",
+      "metric": "ROE > 18%",
+      "title": "Strong Profitability",
+      "description": "Exceptional capital productivity. ROE consistently exceeding 18% and ROA above 8%.",
+      "topStocks": "Top: BBCA, UNVR, ICBP"
+    },
+    {
+      "id": "balance",
+      "companies": "52 Companies",
+      "companiesBg": "bg-secondary/10",
+      "companiesColor": "text-secondary",
+      "metric": "DER < 0.4x",
+      "title": "Healthy Balance Sheet",
+      "description": "Net cash or low gearing with ICR > 8x, resilient against macro interest rate shocks.",
+      "topStocks": "Top: CPIN, KLBF, MYOR"
+    },
+    {
+      "id": "dividend",
+      "companies": "19 Companies",
+      "companiesBg": "bg-tertiary/10",
+      "companiesColor": "text-tertiary",
+      "metric": "Yield > 6.5%",
+      "title": "Dividend Aristocrats",
+      "description": "Sustainable dividend yield over 6.5% backed by healthy payout ratio (35%–70%).",
+      "topStocks": "Top: ITMG, PTBA, BJBR"
+    }
+  ],
+  "blueChips": [
+    {
+      "id": "bbca",
+      "abbr": "CA",
+      "ticker": "BBCA",
+      "sector": "Fin",
+      "per": "23.4x",
+      "perColor": "text-on-surface",
+      "pbv": "4.7x",
+      "price": "Rp 10,650",
+      "change": "+1.19%",
+      "changePositive": true
+    },
+    {
+      "id": "bbri",
+      "abbr": "RI",
+      "ticker": "BBRI",
+      "sector": "Fin",
+      "per": "11.2x",
+      "perColor": "text-on-surface",
+      "pbv": "2.1x",
+      "price": "Rp 4,820",
+      "change": "-0.62%",
+      "changePositive": false
+    },
+    {
+      "id": "tlkm",
+      "abbr": "TL",
+      "ticker": "TLKM",
+      "sector": "Telco",
+      "per": "12.8x",
+      "perColor": "text-on-surface",
+      "pbv": "2.3x",
+      "price": "Rp 2,980",
+      "change": "+0.34%",
+      "changePositive": true
+    },
+    {
+      "id": "asii",
+      "abbr": "AS",
+      "ticker": "ASII",
+      "sector": "Conglom",
+      "per": "6.8x",
+      "perColor": "text-tertiary",
+      "pbv": "1.05x",
+      "price": "Rp 5,175",
+      "change": "+1.47%",
+      "changePositive": true
+    }
+  ],
+  "navTabs": [
+    { "id": "overview", "label": "Home", "active": true },
+    { "id": "screener", "label": "Screener", "active": false },
+    { "id": "stock", "label": "Stock", "active": false }
+  ],
+  "indexTabs": ["ihsg", "lq45", "idx30"],
+  "timeRanges": ["1D", "1W", "1M", "3M", "1Y", "ALL"]
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -202,9 +202,10 @@ function TermsCheckbox({ checked, onToggle, hasError }: TermsCheckboxProps): Rea
 
 interface SuccessStateProps {
   user: SafeUser | null;
+  onGoToLogin: () => void;
 }
 
-function SuccessState({ user }: SuccessStateProps): React.ReactElement {
+function SuccessState({ user, onGoToLogin }: SuccessStateProps): React.ReactElement {
   return (
     <View className="items-center gap-4 py-4">
       <View className="w-16 h-16 rounded-full bg-tertiary-container items-center justify-center">
@@ -216,9 +217,19 @@ function SuccessState({ user }: SuccessStateProps): React.ReactElement {
           Akun Berhasil Dibuat!
         </Text>
         <Text className="text-body-default text-on-surface-variant text-center max-w-xs">
-          Selamat datang di Otrum, {user?.name ?? 'Pengguna'}. Anda akan diarahkan secara otomatis.
+          Selamat datang di Otrum, {user?.name ?? 'Pengguna'}. Silakan masuk dengan akun baru Anda.
         </Text>
       </View>
+
+      <TouchableOpacity
+        onPress={onGoToLogin}
+        className="mt-2 px-6 py-2.5 rounded-xl bg-primary-container"
+        activeOpacity={0.85}
+      >
+        <Text className="text-headline-sm text-on-primary font-semibold">
+          Masuk Sekarang
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -247,6 +258,21 @@ export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenP
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [createdUser, setCreatedUser] = useState<SafeUser | null>(null);
+
+  const goToLogin = useCallback((): void => {
+    clearError();
+    onNavigate('login');
+  }, [clearError, onNavigate]);
+
+  useEffect(() => {
+    if (registerSuccess) {
+      const timer = setTimeout(() => {
+        goToLogin();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [registerSuccess, goToLogin]);
 
   const [errors, setErrors] = useState<FormErrors>({
     name: '',
@@ -339,13 +365,9 @@ export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenP
     animatePress();
     const result = await register(name, email, password);
     if (result.success) {
+      setCreatedUser(result.user);
       setRegisterSuccess(true);
     }
-  }
-
-  function goToLogin(): void {
-    clearError();
-    onNavigate('login');
   }
 
   return (
@@ -407,7 +429,7 @@ export default function RegisterScreen({ authHook, onNavigate }: RegisterScreenP
 
           <View className="bg-surface-container rounded-2xl p-space-lg gap-5 shadow-md">
             {registerSuccess ? (
-              <SuccessState user={auth.user} />
+              <SuccessState user={createdUser} onGoToLogin={goToLogin} />
             ) : (
               <>
                 <FormInput

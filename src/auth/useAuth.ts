@@ -122,7 +122,7 @@ export function useAuth(): AuthHook {
 
     try {
       const user = await registerUser(name, email, password);
-      setAuth({ user, isLoading: false, error: null, isAuthenticated: true });
+      setAuth({ user: null, isLoading: false, error: null, isAuthenticated: false });
       return { success: true, user };
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan. Coba lagi.';
