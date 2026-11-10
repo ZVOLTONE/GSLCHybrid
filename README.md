@@ -1,24 +1,53 @@
 # Market Intelligence App
 
-Aplikasi analitik pasar modal dan intelijen saham berbasis React Native dan Expo.
+Otrum
+Otrum adalah platform market intelligence yang membantu investor memahami kondisi fundamental perusahaan, membandingkan valuasi emiten dalam kelompok industri yang relevan, dan menyusun kriteria analisis berdasarkan preferensi investasi mereka sendiri.
+### Masalah
+setiap investor memiliki preferensi analisis yang berbeda. Sebagian investor lebih mengutamakan valuasi, sedangkan investor lainnya lebih memperhatikan profitabilitas, pertumbuhan bisnis, atau kesehatan keuangan perusahaan.
 
----
+### Target Pengguna
+Target utama aplikasi Otrum adalah investor ritel yang menggunakan analisis fundamental sebagai salah satu dasar pengambilan keputusan investasi.
 
-## f. [LO 1 – 5 Points] Penjelasan Konsep React Native
+Beberapa kebutuhan:
 
+Memahami indikator fundamental dasar seperti P/E, P/B, dan ROE.
+
+Membandingkan beberapa perusahaan sebelum mengambil keputusan investasi.
+
+Membutuhkan informasi fundamental yang terstruktur.
+
+Menginginkan proses analisis yang lebih cepat dan sistematis.
+
+Membandingkan perusahaan dalam sektor atau industri yang sama.
+
+### Pemetaan Kebutuhan ke Layar dan Komponen
+Home Menampilkan ringkasan saham dan indikator fundamental.
+Stock: Memungkinkan pengguna mencari saham berdasarkan ticker atau nama perusahaan.
+Screener: Memungkinkan pengguna mencari dan menyaring saham berdasarkan sektor, industri, serta kriteria fundamental.
+
+### Rencana pengembangan
+Integrasi Yahoo Finance melalui yfinance, pencarian perusahaan, pengambilan data fundamental, dan validasi data.
+Implementasi pemilihan dimensi, pengaturan bobot, kustomisasi metrik, dan preset strategi.
+
+Link Video + Pelengkap=
+https://drive.google.com/drive/folders/19wEaYxOag1Qwnm51ZxInoeA976zjEIZL?usp=sharing
+### Cara setup
+npm ci
+npx expo start
+Note pastikan node js sudah terisntall
 ### 1. Cara Kerja React Native
-React Native bekerja dengan memisahkan arsitektur aplikasi ke dalam dua thread utama, yaitu **JavaScript Thread** dan **Native Thread (UI Thread)**. Logika bisnis serta kode antarmuka yang ditulis dalam JavaScript atau TypeScript dieksekusi oleh mesin runtime (seperti Hermes). Komunikasi antara kode JavaScript dengan API dan komponen asli sistem operasi dilakukan melalui jembatan komunikasi (*Bridge*) atau antarmuka langsung berbasis *JavaScript Interface* (JSI) pada arsitektur modern. Berbeda dengan pendekatan hybrid konvensional yang membungkus kode HTML/CSS di dalam WebView, React Native memetakan elemen JSX secara langsung ke komponen antarmuka asli platform target, seperti `UIView` pada iOS dan `android.view.View` pada Android. Hasilnya, aplikasi memiliki tampilan, sentuhan interaksi, dan responsivitas layaknya aplikasi native murni.
+Cara kerja utama React Native adalah dengan menjembatani kode JavaScript yang ditulis dengan komponen UI asli dari platform (Android atau iOS). Jadi React seperti penerjemah dari TS atau JS ke bahasa nativenya Android atau IOS dan developer tidak perlu mengubah TS untuk tiap device.
 
 ### 2. Keunggulan React Native untuk Aplikasi Hybrid
 1. **Efisiensi Basis Kode Tunggal (Single Codebase):** Pengembang dapat membagikan mayoritas kode logika, antarmuka, dan manajemen data untuk platform Android dan iOS sekaligus. Hal ini memangkas waktu pengembangan, menyederhanakan siklus rilis, serta menekan biaya pemeliharaan aplikasi secara drastis.
-2. **Performa Nyata Mendekati Native:** Karena merender widget asli sistem operasi dan tidak bergantung pada rendering DOM browser, aplikasi memiliki performa tinggi, animasi yang mulus, serta integrasi mendalam ke perangkat keras seperti kamera, biometrik, dan sensor lokal.
-3. **Ekosistem Matang dan Produktivitas Tinggi:** Dukungan komunitas yang masif menyediakan pustaka siap pakai untuk beragam kebutuhan. Selain itu, fitur *Fast Refresh* memungkinkan pengembang melihat hasil perubahan kode secara langsung dalam hitungan detik tanpa harus mengompilasi ulang proyek dari awal.
+2. **Performa Nyata Mendekati Native:** Karena merender widget asli sistem operasi dan tidak bergantung pada rendering DOM browser, aplikasi memiliki performa tinggi, animasi yang mulus, serta integrasi mendalam ke perangkat keras atau driver seperti kamera, biometrik, dan sensor lokal.
+3. **Ekosistemnya Matang dari komunitas:** Perlu berterima kasih juga dari komunitas yang menyediakan library siap pakai sehingga memudahkan development, fitur Fast Refresh memungkinkan pengembang melihat hasil perubahan kode secara langsung dalam hitungan detik tanpa harus mengompilasi ulang proyek dari awal.
 
 ### 3. Konsep Inti: Komponen, Props, State, dan Navigasi
-1. **Komponen (Component):** Blok pembangun modular yang independen dan dapat digunakan kembali (*reusable*) untuk menyusun tampilan antarmuka dan menangani perilaku UI.
-2. **Props (Properties):** Argumen atau parameter yang dikirimkan dari komponen induk (*parent*) ke komponen anak (*child*). Props bersifat *read-only* (*immutable*) sehingga komponen anak tidak dapat mengubah nilai props tersebut secara sepihak.
-3. **State:** Penyimpanan data lokal dan dinamis di dalam komponen yang dapat dimodifikasi (misalnya melalui `useState`). Setiap kali nilai state diperbarui, komponen terkait akan melakukan proses render ulang (*re-render*) secara otomatis untuk memperbarui tampilan.
-4. **Navigasi (Navigation):** Mekanisme yang mengatur transisi, perpindahan layar, serta riwayat penjelajahan pengguna di dalam aplikasi (dapat berupa stack, tab, maupun *conditional routing* berbasis state).
+1. **Komponen (Component):** Blok pembangun modular yang independen dan dapat digunakan kembali (reusable) untuk menyusun tampilan antarmuka dan menangani perilaku UI.
+2. **Props (Properties):** Argumen atau parameter yang dikirimkan dari komponen induk (parent) ke komponen anak (child). Props bersifat *ead-only (immutable) sehingga komponen anak tidak dapat mengubah nilai props tersebut secara sepihak.
+3. **State:** Penyimpanan data lokal dan dinamis di dalam komponen yang dapat dimodifikasi (misalnya melalui useState). Setiap kali nilai state diperbarui, komponen terkait akan melakukan proses render ulang (re-render) secara otomatis untuk memperbarui tampilan.
+4. **Navigasi (Navigation):** Mekanisme yang mengatur transisi, perpindahan layar, serta riwayat penjelajahan pengguna di dalam aplikasi (dapat berupa stack, tab, maupun conditional routing berbasis state).
 
 ---
 
@@ -30,14 +59,12 @@ Berikut adalah contoh kode mandiri yang menggabungkan keempat konsep di atas:
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
 
-// ==========================================
-// 1. KOMPONEN & PROPS (Komponen Anak / Child)
+// 1. KOMPONEN & PROPS (dilihat dari komponen child)
 // Menerima data melalui PROPS (read-only)
-// ==========================================
 interface StockCardProps {
   ticker: string;
   price: string;
-  onSelect: (ticker: string) => void; // Fungsi callback via props
+  onSelect: (ticker: string) => void; 
 }
 
 function StockCard({ ticker, price, onSelect }: StockCardProps) {
@@ -55,33 +82,28 @@ function StockCard({ ticker, price, onSelect }: StockCardProps) {
   );
 }
 
-// ==========================================
 // 2. STATE & NAVIGASI (Komponen Induk / Parent)
-// Mengelola data dinamis (STATE) dan alur layar (NAVIGASI)
-// ==========================================
 export default function App() {
-  // STATE: Menyimpan layar aktif untuk navigasi & saham yang dipilih
+  //State: Menyimpan layar aktif untuk navigasi & saham yang dipilih
   const [currentScreen, setCurrentScreen] = useState<'list' | 'detail'>('list');
   const [selectedStock, setSelectedStock] = useState<string>('');
 
-  // NAVIGASI: Fungsi transisi antar layar
+  //Navigasi: Fungsi transisi antar layar
   const handleNavigateToDetail = (ticker: string) => {
     setSelectedStock(ticker);
-    setCurrentScreen('detail'); // Mengubah state memicu navigasi ke Detail
+    setCurrentScreen('detail'); 
   };
 
   const handleNavigateBack = () => {
-    setCurrentScreen('list'); // Navigasi kembali ke Daftar
+    setCurrentScreen('list'); 
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* NAVIGASI BERSYARAT (Conditional Rendering Navigation) */}
       {currentScreen === 'list' ? (
         <View>
           <Text style={styles.header}>Daftar Saham Pilihan</Text>
           
-          {/* Melewatkan data ke Komponen Anak melalui PROPS */}
           <StockCard 
             ticker="BBCA" 
             price="Rp 10.150" 
