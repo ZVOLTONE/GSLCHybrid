@@ -1,6 +1,7 @@
 # Market Intelligence App
 
-Otrum
+![Alt Text](<assets/Home.jpeg>)
+
 Otrum adalah platform market intelligence yang membantu investor memahami kondisi fundamental perusahaan, membandingkan valuasi emiten dalam kelompok industri yang relevan, dan menyusun kriteria analisis berdasarkan preferensi investasi mereka sendiri.
 ### Masalah
 setiap investor memiliki preferensi analisis yang berbeda. Sebagian investor lebih mengutamakan valuasi, sedangkan investor lainnya lebih memperhatikan profitabilitas, pertumbuhan bisnis, atau kesehatan keuangan perusahaan.
@@ -21,10 +22,42 @@ Menginginkan proses analisis yang lebih cepat dan sistematis.
 Membandingkan perusahaan dalam sektor atau industri yang sama.
 
 ### Pemetaan Kebutuhan ke Layar dan Komponen
-Home Menampilkan ringkasan saham dan indikator fundamental.
-Stock: Memungkinkan pengguna mencari saham berdasarkan ticker atau nama perusahaan.
-Screener: Memungkinkan pengguna mencari dan menyaring saham berdasarkan sektor, industri, serta kriteria fundamental.
+## Pemetaan Kebutuhan ke Layar dan Komponen
 
+Note: ini beberapa masih berupa konsep pak nanti kita lihat apakah ada yang saya buang wkwkwk
+
+| Kebutuhan Pengguna | Layar | Komponen |
+|---|---|---|
+| Melihat ringkasan kondisi pasar saham | Home | Market Summary, Market Index, Market Overview |
+| Mengakses saham yang menjadi perhatian | Home | Favorite Stocks, Stock Watchlist |
+| Mencari saham berdasarkan nama atau kode saham | Screener | Search Bar, Stock List |
+| Menyaring saham berdasarkan sektor dan industri | Screener | Sector Filter, Industry Filter |
+| Melihat data fundamental perusahaan | Stock Detail | Fundamental Metrics, Financial Overview |
+| Membandingkan beberapa perusahaan | Comparison | Company Selector, Comparison Table, Comparison Chart |
+| Membuat strategi analisis berdasarkan preferensi | Strategy Builder | Strategy Form, Metric Selector, Weight Configuration |
+| Menentukan bobot setiap metrik penilaian | Strategy Builder | Weight Input, Weight Distribution |
+| Melihat hasil penilaian saham berdasarkan strategi | Strategy Builder / Comparison | Scoring Result, Ranking List, Score Breakdown |
+| Memahami sumber dan periode data yang digunakan | Stock Detail / Comparison | Data Source, Reporting Period, Data Status |
+| Melihat informasi perusahaan dan anak usahanya | Company Detail | Company Overview, Subsidiary List |
+| Melihat pemegang saham perusahaan | Company Detail | Shareholder List, Ownership Structure |
+
+### Struktur Navigasi
+
+Navigasi utama aplikasi terdiri dari:
+
+- **Home:** Menampilkan ringkasan pasar dan saham favorit.
+- **Screener:** Memungkinkan pengguna mencari dan menyaring saham berdasarkan kriteria tertentu.
+- **Stock:** Menampilkan daftar saham dan akses menuju detail perusahaan.
+
+Sementara itu, fitur **Strategy Builder** dan **Comparison** diakses melalui halaman fitur, bukan sebagai bagian dari navigasi utama.
+
+Halaman detail perusahaan memiliki beberapa tab:
+
+- **Overview:** Ringkasan informasi perusahaan.
+- **Fundamentals:** Informasi kinerja dan kondisi keuangan.
+- **Valuation:** Informasi valuasi saham.
+- **Company Structure:** Struktur perusahaan dan anak usaha.
+- **Shareholders:** Informasi kepemilikan saham.
 ### Rencana pengembangan
 Integrasi Yahoo Finance melalui yfinance, pencarian perusahaan, pengambilan data fundamental, dan validasi data.
 Implementasi pemilihan dimensi, pengaturan bobot, kustomisasi metrik, dan preset strategi.
