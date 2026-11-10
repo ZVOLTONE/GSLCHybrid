@@ -65,9 +65,9 @@ Implementasi pemilihan dimensi, pengaturan bobot, kustomisasi metrik, dan preset
 Link Video + Pelengkap=
 https://drive.google.com/drive/folders/19wEaYxOag1Qwnm51ZxInoeA976zjEIZL?usp=sharing
 ### Cara setup
-npm ci
-npx expo start
-Note pastikan node js sudah terisntall
+- npm ci
+- npx expo start
+- Note pastikan node js sudah terisntall
 ### 1. Cara Kerja React Native
 Cara kerja utama React Native adalah dengan menjembatani kode JavaScript yang ditulis dengan komponen UI asli dari platform (Android atau iOS). Jadi React seperti penerjemah dari TS atau JS ke bahasa nativenya Android atau IOS dan developer tidak perlu mengubah TS untuk tiap device.
 
@@ -92,8 +92,8 @@ Berikut adalah contoh kode mandiri yang menggabungkan keempat konsep di atas:
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
 
-// 1. KOMPONEN & PROPS (dilihat dari komponen child)
-// Menerima data melalui PROPS (read-only)
+// KOMPONEN&PROPS(dilihat dari komponen child)
+// Menerima data melalui PROPS 
 interface StockCardProps {
   ticker: string;
   price: string;
@@ -115,7 +115,7 @@ function StockCard({ ticker, price, onSelect }: StockCardProps) {
   );
 }
 
-// 2. STATE & NAVIGASI (Komponen Induk / Parent)
+// STATE & NAVIGASI (Komponen Induk/Parent)
 export default function App() {
   //State: Menyimpan layar aktif untuk navigasi & saham yang dipilih
   const [currentScreen, setCurrentScreen] = useState<'list' | 'detail'>('list');
@@ -161,15 +161,5 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#121212' },
-  header: { fontSize: 22, fontWeight: 'bold', color: '#FFFFFF', marginBottom: 16 },
-  card: { backgroundColor: '#1E1E1E', padding: 16, borderRadius: 8, marginBottom: 12 },
-  cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#4EDEA3' },
-  cardSubtitle: { fontSize: 14, color: '#A0A0A0', marginVertical: 6 },
-  detailButton: { backgroundColor: '#2E7D32', padding: 8, borderRadius: 4, alignItems: 'center' },
-  backButton: { backgroundColor: '#424242', padding: 10, borderRadius: 6, alignItems: 'center', marginTop: 16 },
-  buttonText: { color: '#FFFFFF', fontWeight: 'bold' },
-  infoText: { fontSize: 14, color: '#CCCCCC', marginTop: 8 }
-});
+
 ```
