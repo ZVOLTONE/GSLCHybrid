@@ -1,32 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Image, Pressable, Text, TextInput, View } from 'react-native';
 import Svg, { Circle, Line, Rect, Text as SvgText } from 'react-native-svg';
+import { SCREENER_PRESETS, SCREENER_SECTORS, SCREENER_STOCKS } from '../data/screenerStocks';
 
 const DUMMY_IMG = require('../../assets/dummy.png');
-
-type ScreenStock = {
-  ticker: string;
-  name: string;
-  sector: string;
-  price: string;
-  change: string;
-  per: number;
-  pbv: number;
-  roe: number;
-  dividend: number;
-  debt: number;
-  marketCap: number;
-};
-
-const STOCKS: ScreenStock[] = [
-  { ticker: 'BBCA', name: 'Bank Central Asia', sector: 'Financials', price: 'Rp 10.650', change: '+1,19%', per: 23.4, pbv: 4.7, roe: 21.8, dividend: 3.1, debt: 0.2, marketCap: 1313 },
-  { ticker: 'BBRI', name: 'Bank Rakyat Indonesia', sector: 'Financials', price: 'Rp 4.820', change: '-0,62%', per: 11.2, pbv: 2.1, roe: 18.4, dividend: 6.2, debt: 0.6, marketCap: 730 },
-  { ticker: 'ASII', name: 'Astra International', sector: 'Industrials', price: 'Rp 5.175', change: '+1,47%', per: 6.8, pbv: 1.05, roe: 15.6, dividend: 7.1, debt: 0.8, marketCap: 209 },
-  { ticker: 'TLKM', name: 'Telkom Indonesia', sector: 'Communication', price: 'Rp 2.980', change: '+0,34%', per: 12.8, pbv: 2.3, roe: 16.2, dividend: 4.8, debt: 0.5, marketCap: 295 },
-  { ticker: 'ICBP', name: 'Indofood CBP Sukses Makmur', sector: 'Consumer Staples', price: 'Rp 11.100', change: '+0,45%', per: 14.1, pbv: 2.4, roe: 18.1, dividend: 2.7, debt: 0.4, marketCap: 130 },
-];
-
-const PRESETS = ['Semua Saham', 'Valuasi Menarik', 'Dividen Tinggi', 'ROE > 15%', 'Utang Rendah'];
 
 type ScreenerScreenProps = {
   favorites: string[];
@@ -35,12 +12,12 @@ type ScreenerScreenProps = {
 
 export default function ScreenerScreen({ favorites, onToggleFavorite }: ScreenerScreenProps): React.ReactElement {
   const [query, setQuery] = useState('');
-  const [preset, setPreset] = useState(PRESETS[0]);
+  const [preset, setPreset] = useState(SCREENER_PRESETS[0]);
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [sector, setSector] = useState('Semua sektor');
   const [selectedTicker, setSelectedTicker] = useState('BBCA');
 
-  const results = useMemo(() => STOCKS.filter((stock) => {
+  const results = useMemo(() => SCREENER_STOCKS.filter((stock) => {
     const matchesQuery = `${stock.ticker} ${stock.name}`.toLowerCase().includes(query.trim().toLowerCase());
     const matchesSector = sector === 'Semua sektor' || stock.sector === sector;
     const matchesPreset = preset === 'Semua Saham'
@@ -75,10 +52,8 @@ export default function ScreenerScreen({ favorites, onToggleFavorite }: Screener
       <View className="gap-2">
         <Text className="text-label-badge text-on-surface-variant">STRATEGI CEPAT</Text>
         <View className="flex-row flex-wrap gap-2">
-          {PRESETS.map((item) => (
-            <Pressable key={item} onPress={() => setPreset(item)} className={`min-h-11 px-3 rounded-full justify-center ${preset === item ? 'bg-primary-container' : 'bg-surface-container'}`} accessibilityRole="button" accessibilityState={{ selected: preset === item }}>
-              <Text className={`text-label-badge ${preset === item ? 'text-on-primary-container' : 'text-on-surface-variant'}`}>{item}</Text>
-            </Pressable>
+          {SCREENER_PRESETS.map((item) => (
+            <FilterChip key={item} label={item} selected={preset === item} onPress={() => setPreset(item)} />
           ))}
         </View>
       </View>
@@ -88,10 +63,8 @@ export default function ScreenerScreen({ favorites, onToggleFavorite }: Screener
           <Text className="text-headline-sm text-on-surface">Filter fundamental</Text>
           <TextInput value={query} onChangeText={setQuery} placeholder="Cari ticker atau nama emiten" placeholderTextColor="#88929b" autoCapitalize="characters" autoCorrect={false} className="min-h-11 rounded-lg bg-surface-container-lowest px-3 text-on-surface" accessibilityLabel="Cari saham" />
           <View className="flex-row flex-wrap gap-2">
-            {['Semua sektor', 'Financials', 'Industrials', 'Communication', 'Consumer Staples'].map((item) => (
-              <Pressable key={item} onPress={() => setSector(item)} className={`min-h-10 px-3 rounded-lg justify-center ${sector === item ? 'bg-primary-container/20' : 'bg-surface-container'}`} accessibilityRole="button" accessibilityState={{ selected: sector === item }}>
-                <Text className={`text-label-badge ${sector === item ? 'text-primary' : 'text-on-surface-variant'}`}>{item}</Text>
-              </Pressable>
+            {SCREENER_SECTORS.map((item) => (
+              <FilterChip key={item} label={item} selected={sector === item} tone="soft" onPress={() => setSector(item)} />
             ))}
           </View>
           <Text className="text-body-compact text-on-surface-variant">Rentang metrik tersedia di strategi cepat. Sektor dan industri digunakan sebagai filter screener.</Text>
@@ -224,5 +197,16 @@ function LegendDot({ color, label }: { color: string; label: string }): React.Re
       <View className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
       <Text className="text-label-mono-sm text-on-surface-variant">{label}</Text>
     </View>
+  );
+}
+
+function FilterChip({ label, selected, onPress, tone = 'primary' }: { label: string; selected: boolean; onPress: () => void; tone?: 'primary' | 'soft' }): React.ReactElement {
+  const selectedClass = tone === 'primary' ? 'bg-primary-container' : 'bg-primary-container/20';
+  const selectedTextClass = tone === 'primary' ? 'text-on-primary-container' : 'text-primary';
+
+  return (
+    <Pressable onPress={onPress} className={`min-h-11 px-3 rounded-full justify-center ${selected ? selectedClass : 'bg-surface-container'}`} accessibilityRole="button" accessibilityState={{ selected }}>
+      <Text className={`text-label-badge ${selected ? selectedTextClass : 'text-on-surface-variant'}`}>{label}</Text>
+    </Pressable>
   );
 }
